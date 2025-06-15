@@ -1,0 +1,26 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+dist
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Development files
+*.log
+.vscode
+.idea
+*.md
+*.test.ts
+*.spec.ts
+
+# OS files
+.DS_Store
+Thumbs.db
