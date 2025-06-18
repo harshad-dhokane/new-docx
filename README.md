@@ -1,4 +1,4 @@
-# Docx Craft
+Docx Craft
 
 A modern full-stack document management and PDF conversion platform, leveraging React, Express, TypeScript, Drizzle ORM, and Supabase for authentication and storage.
 
@@ -224,4 +224,3 @@ MIT
 **Maintainers:**  
 - [Your Name](mailto:your@email.com)
 
----
