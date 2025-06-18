@@ -136,6 +136,7 @@ npm install
 Create a `.env` file in the root:
 
 ```
+DATABASE_URL=postgresql://postgres:<your_password>@db.<project_id>.supabase.co:<port>/postgres
 VITE_SUPABASE_URL=https://<your-project>.supabase.co
 VITE_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
