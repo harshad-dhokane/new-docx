@@ -1,13 +1,12 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const signupSchema = z
@@ -17,7 +16,7 @@ const signupSchema = z
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword'],
   });
@@ -56,11 +55,10 @@ const SignupForm = () => {
           description: 'Welcome to DocCraft PDF! Please check your email to verify your account.',
         });
       }
-    } catch (err) {
+    } catch (error) {
       toast({
         title: 'Signup Failed',
-        description:
-          err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive',
       });
     } finally {

@@ -1,10 +1,9 @@
-import { formatDistanceToNow } from 'date-fns';
-import { FileText, TrendingUp, Calendar, BarChart3 } from 'lucide-react';
-
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, TrendingUp, Calendar, BarChart3 } from 'lucide-react';
 import { GeneratedPDF } from '@/hooks/useGeneratedPDFs';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TemplateStats {
   templateId: string;
@@ -34,7 +33,7 @@ export const TemplateDistribution = ({
 }: TemplateDistributionProps) => {
   // Group files by template
   const templateStats: TemplateStats[] = generatedPDFs.reduce((acc, pdf) => {
-    const existingTemplate = acc.find(t => t.templateId === pdf.template_id);
+    const existingTemplate = acc.find((t) => t.templateId === pdf.template_id);
 
     if (existingTemplate) {
       existingTemplate.fileCount++;
@@ -81,7 +80,7 @@ export const TemplateDistribution = ({
       </CardHeader>
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedTemplates.map(template => (
+          {sortedTemplates.map((template) => (
             <Card
               key={template.templateId}
               className={`hover:shadow-md transition-all duration-200 cursor-pointer border ${
@@ -136,7 +135,7 @@ export const TemplateDistribution = ({
                       <div
                         className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
                         style={{
-                          width: `${(template.fileCount / Math.max(...sortedTemplates.map(t => t.fileCount))) * 100}%`,
+                          width: `${(template.fileCount / Math.max(...sortedTemplates.map((t) => t.fileCount))) * 100}%`,
                         }}
                       />
                     </div>
@@ -146,7 +145,7 @@ export const TemplateDistribution = ({
                     size="sm"
                     variant={activeTemplateFilter === template.templateId ? 'default' : 'outline'}
                     className="w-full text-xs"
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation();
                       onTemplateFilter(
                         activeTemplateFilter === template.templateId ? null : template.templateId
@@ -170,7 +169,7 @@ export const TemplateDistribution = ({
                 <TrendingUp className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-900">
                   Filtering by:{' '}
-                  {sortedTemplates.find(t => t.templateId === activeTemplateFilter)?.templateName}
+                  {sortedTemplates.find((t) => t.templateId === activeTemplateFilter)?.templateName}
                 </span>
               </div>
               <Button

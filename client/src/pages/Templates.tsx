@@ -1,32 +1,9 @@
-import {
-  FileText,
-  Trash2,
-  Eye,
-  Plus,
-  Activity,
-  FileSpreadsheet,
-  Filter,
-  Search,
-  Grid3X3,
-  List,
-} from 'lucide-react';
 import { useState, useMemo } from 'react';
-import { useLocation } from 'wouter';
-
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -34,29 +11,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import UploadTemplateDialog from '@/components/UploadTemplateDialog';
-import { useToast } from '@/hooks/use-toast';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Upload,
+  FileText,
+  Trash2,
+  Eye,
+  Plus,
+  Activity,
+  Users,
+  Clock,
+  FileSpreadsheet,
+  Filter,
+  Search,
+  Grid3X3,
+  List,
+} from 'lucide-react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useTemplates } from '@/hooks/useTemplates';
-
-interface _Template {
-  id: string;
-  name: string;
-  file_path: string;
-  file_size: number | null;
-  placeholders: string[] | unknown; // Could be Json type from DB
-  use_count: number | null;
-  upload_date: string;
-  user_id: string;
-}
-
-type FilterType = 'all' | 'docx' | 'xlsx';
-type ViewMode = 'grid' | 'list';
+import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'wouter';
+import UploadTemplateDialog from '@/components/UploadTemplateDialog';
 
 const Templates = () => {
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<'all' | 'docx' | 'xlsx'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const templatesPerPage = 6;
 
   const { templates, isLoading, deleteTemplate } = useTemplates();
@@ -70,18 +59,8 @@ const Templates = () => {
   const handleDeleteTemplate = async (templateId: string) => {
     try {
       await deleteTemplate(templateId);
-      toast({
-        title: 'Template deleted',
-        description: 'The template has been successfully deleted.',
-      });
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      console.error('Failed to delete template:', errorMessage);
-      toast({
-        title: 'Error',
-        description: `Failed to delete template: ${errorMessage}`,
-        variant: 'destructive',
-      });
+    } catch (error) {
+      console.error('Failed to delete template:', error);
     }
   };
 
@@ -91,7 +70,7 @@ const Templates = () => {
 
     // Apply type filter
     if (filter !== 'all') {
-      filtered = filtered.filter(template => {
+      filtered = filtered.filter((template) => {
         if (filter === 'docx') return template.name.endsWith('.docx');
         if (filter === 'xlsx') return template.name.endsWith('.xlsx');
         return true;
@@ -100,7 +79,7 @@ const Templates = () => {
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = filtered.filter(template =>
+      filtered = filtered.filter((template) =>
         template.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -125,8 +104,8 @@ const Templates = () => {
   };
 
   // Categorize templates by file type
-  const docxTemplates = templates.filter(t => t.name.endsWith('.docx'));
-  const excelTemplates = templates.filter(t => t.name.endsWith('.xlsx'));
+  const docxTemplates = templates.filter((t) => t.name.endsWith('.docx'));
+  const excelTemplates = templates.filter((t) => t.name.endsWith('.xlsx'));
 
   const stats = [
     {
@@ -152,7 +131,7 @@ const Templates = () => {
     },
   ];
 
-  const TemplateCard = ({ template }: { template: _Template }) => {
+  const TemplateCard = ({ template }: { template: any }) => {
     // Properly handle placeholders as Json type
     const placeholders = Array.isArray(template.placeholders) ? template.placeholders : [];
     const stringPlaceholders = placeholders.filter((p): p is string => typeof p === 'string');
@@ -240,7 +219,7 @@ const Templates = () => {
     );
   };
 
-  const TemplateListItem = ({ template }: { template: _Template }) => {
+  const TemplateListItem = ({ template }: { template: any }) => {
     // Properly handle placeholders as Json type
     const placeholders = Array.isArray(template.placeholders) ? template.placeholders : [];
     const stringPlaceholders = placeholders.filter((p): p is string => typeof p === 'string');
@@ -362,7 +341,7 @@ const Templates = () => {
                 <Input
                   placeholder="Search templates..."
                   value={searchQuery}
-                  onChange={e => handleSearchChange(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10 w-64"
                 />
               </div>
@@ -449,13 +428,13 @@ const Templates = () => {
         <div className="space-y-6">
           {viewMode === 'grid' ? (
             <div className="grid gap-4 lg:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-              {paginatedTemplates.map(template => (
+              {paginatedTemplates.map((template) => (
                 <TemplateCard key={template.id} template={template} />
               ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {paginatedTemplates.map(template => (
+              {paginatedTemplates.map((template) => (
                 <TemplateListItem key={template.id} template={template} />
               ))}
             </div>
@@ -469,19 +448,19 @@ const Templates = () => {
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage > 1) setCurrentPage(prev => prev - 1);
+                        if (currentPage > 1) setCurrentPage((prev) => prev - 1);
                       }}
                       className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
                     />
                   </PaginationItem>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <PaginationItem key={page}>
                       <PaginationLink
                         href="#"
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           setCurrentPage(page);
                         }}
@@ -495,9 +474,9 @@ const Templates = () => {
                   <PaginationItem>
                     <PaginationNext
                       href="#"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+                        if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
                       }}
                       className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
                     />

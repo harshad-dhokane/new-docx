@@ -1,8 +1,9 @@
-import { Upload, FileText, FileSpreadsheet, Plus } from 'lucide-react';
 import { useState } from 'react';
-
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Upload, FileText, FileSpreadsheet, Plus } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
 import { useTemplates } from '@/hooks/useTemplates';
+import { useToast } from '@/hooks/use-toast';
 
 interface UploadTemplateDialogProps {
   children: React.ReactNode;

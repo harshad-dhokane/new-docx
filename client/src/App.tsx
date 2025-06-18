@@ -1,22 +1,21 @@
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Router, Route, Switch } from 'wouter';
-
-import { Toaster as Sonner } from '@/components/ui/sonner';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
-
-import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
-import Activity from './pages/Activity';
-import Analytics from './pages/Analytics';
-import Dashboard from './pages/Dashboard';
-import GeneratedPDFs from './pages/GeneratedPDFs';
+import ProtectedRoute from './components/ProtectedRoute';
 import Index from './pages/Index';
-import NotFound from './pages/NotFound';
-import Settings from './pages/Settings';
-import TemplateGenerator from './pages/TemplateGenerator';
+import Dashboard from './pages/Dashboard';
 import Templates from './pages/Templates';
+import TemplateGenerator from './pages/TemplateGenerator';
+import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
+import Analytics from './pages/Analytics';
+import Activity from './pages/Activity';
+import GeneratedPDFs from './pages/GeneratedPDFs';
 import UserGuide from './pages/UserGuide';
+import AuthCallback from './pages/AuthCallback';
 
 const queryClient = new QueryClient();
 

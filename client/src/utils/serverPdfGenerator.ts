@@ -1,19 +1,8 @@
-interface NetworkError extends Error {
-  name: string;
-  message: string;
-}
-
-function isNetworkError(error: unknown): error is NetworkError {
-  return (
-    error instanceof Error && typeof error.name === 'string' && typeof error.message === 'string'
-  );
-}
-
 export const convertToPdfOnServer = async (file: File): Promise<Blob> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  console.warn('Sending file to server for PDF conversion:', file.name);
+  console.log('Sending file to server for PDF conversion:', file.name);
 
   try {
     const response = await fetch('/api/convert-to-pdf', {
@@ -21,8 +10,8 @@ export const convertToPdfOnServer = async (file: File): Promise<Blob> => {
       body: formData,
     });
 
-    console.warn('Server response status:', response.status);
-    console.warn('Server response headers:', Object.fromEntries(response.headers.entries()));
+    console.log('Server response status:', response.status);
+    console.log('Server response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       let errorMessage = 'PDF conversion failed on server';
@@ -45,7 +34,7 @@ export const convertToPdfOnServer = async (file: File): Promise<Blob> => {
     }
 
     const pdfBlob = await response.blob();
-    console.warn('PDF conversion successful, received blob size:', pdfBlob.size);
+    console.log('PDF conversion successful, received blob size:', pdfBlob.size);
 
     if (pdfBlob.size === 0) {
       throw new Error('Received empty PDF file from server');
@@ -54,11 +43,7 @@ export const convertToPdfOnServer = async (file: File): Promise<Blob> => {
     return pdfBlob;
   } catch (networkError) {
     console.error('Network error during PDF conversion:', networkError);
-    if (
-      isNetworkError(networkError) &&
-      networkError.name === 'TypeError' &&
-      networkError.message.includes('fetch')
-    ) {
+    if (networkError.name === 'TypeError' && networkError.message.includes('fetch')) {
       throw new Error('Unable to connect to PDF conversion server. Please try again later.');
     }
     throw networkError;
@@ -67,7 +52,7 @@ export const convertToPdfOnServer = async (file: File): Promise<Blob> => {
 
 export const checkServerHealth = async (): Promise<boolean> => {
   try {
-    console.warn('Checking server health...');
+    console.log('Checking server health...');
     const response = await fetch('/api/health', {
       method: 'GET',
       headers: {
@@ -75,7 +60,7 @@ export const checkServerHealth = async (): Promise<boolean> => {
       },
     });
 
-    console.warn('Health check response status:', response.status);
+    console.log('Health check response status:', response.status);
 
     if (!response.ok) {
       console.error('Health check failed with status:', response.status);
@@ -83,10 +68,10 @@ export const checkServerHealth = async (): Promise<boolean> => {
     }
 
     const data = await response.json();
-    console.warn('Health check response:', data);
+    console.log('Health check response:', data);
 
     const isHealthy = data.status === 'ok';
-    console.warn('Server health status:', isHealthy ? 'healthy' : 'unhealthy');
+    console.log('Server health status:', isHealthy ? 'healthy' : 'unhealthy');
 
     return isHealthy;
   } catch (error) {

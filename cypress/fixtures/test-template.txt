@@ -1,8 +1,0 @@
-Test Document
-
-Name: {{name}}
-Date: {{date}}
-Company: {{company}}
-Address: {{address}}
-
-This is a test template document used for Cypress testing. 

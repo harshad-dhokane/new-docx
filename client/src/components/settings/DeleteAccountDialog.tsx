@@ -1,8 +1,4 @@
-import { AlertTriangle, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -11,11 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { AlertTriangle, Trash2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface DeleteAccountDialogProps {
   children: React.ReactNode;
@@ -71,11 +70,11 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
       // Sign out and close dialog
       await signOut();
       setOpen(false);
-    } catch (error: unknown) {
-      console.error('Error deleting account:', error);
+    } catch (error: any) {
+      console.error('Account deletion error:', error);
       toast({
-        title: 'Account Deletion Failed',
-        description: error instanceof Error ? error.message : 'Failed to delete your account.',
+        title: 'Deletion Failed',
+        description: error.message || 'Failed to delete account. Please contact support.',
         variant: 'destructive',
       });
     } finally {
@@ -92,7 +91,7 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
   return (
     <Dialog
       open={open}
-      onOpenChange={newOpen => {
+      onOpenChange={(newOpen) => {
         setOpen(newOpen);
         if (!newOpen) resetForm();
       }}
@@ -132,7 +131,7 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
               <Checkbox
                 id="acknowledge-data"
                 checked={acknowledgeData}
-                onCheckedChange={checked => setAcknowledgeData(!!checked)}
+                onCheckedChange={(checked) => setAcknowledgeData(!!checked)}
               />
               <Label htmlFor="acknowledge-data" className="text-sm leading-relaxed">
                 I understand that all my data will be permanently deleted and cannot be recovered.
@@ -143,7 +142,7 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
               <Checkbox
                 id="acknowledge-irreversible"
                 checked={acknowledgeIrreversible}
-                onCheckedChange={checked => setAcknowledgeIrreversible(!!checked)}
+                onCheckedChange={(checked) => setAcknowledgeIrreversible(!!checked)}
               />
               <Label htmlFor="acknowledge-irreversible" className="text-sm leading-relaxed">
                 I understand that this action is irreversible and I will lose access to my account
@@ -159,7 +158,7 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
             <Input
               id="confirm-delete"
               value={confirmText}
-              onChange={e => setConfirmText(e.target.value)}
+              onChange={(e) => setConfirmText(e.target.value)}
               placeholder="Type DELETE here"
               className="font-mono"
             />

@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
 import { useAuth } from './useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Profile {
   id: string;
@@ -70,11 +68,10 @@ export function useProfiles() {
         description: 'Your profile has been updated successfully.',
       });
     },
-    onError: (error: unknown) => {
-      console.error('Error updating profile:', error);
+    onError: (error: any) => {
       toast({
         title: 'Update Failed',
-        description: error instanceof Error ? error.message : 'Failed to update profile.',
+        description: error.message,
         variant: 'destructive',
       });
     },
@@ -101,7 +98,7 @@ export function useProfiles() {
         if (existingFiles?.length) {
           const { error: removeError } = await supabase.storage
             .from('profile-images')
-            .remove(existingFiles.map(f => `${user.id}/${f.name}`));
+            .remove(existingFiles.map((f) => `${user.id}/${f.name}`));
 
           if (removeError) {
             console.error('Error removing existing avatar:', removeError);
@@ -167,11 +164,10 @@ export function useProfiles() {
         description: 'Your profile image has been updated successfully.',
       });
     },
-    onError: (error: unknown) => {
-      console.error('Error uploading avatar:', error);
+    onError: (error: any) => {
       toast({
         title: 'Upload Failed',
-        description: error instanceof Error ? error.message : 'Failed to upload avatar.',
+        description: error.message || 'Failed to upload avatar. Please try again.',
         variant: 'destructive',
       });
     },

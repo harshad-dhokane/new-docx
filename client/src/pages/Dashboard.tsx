@@ -1,18 +1,12 @@
-import { FileText, Download, Upload, Plus, Trash2, TrendingUp } from 'lucide-react';
-import { Link } from 'wouter';
-
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import UploadTemplateDialog from '@/components/UploadTemplateDialog';
-import { useGeneratedPDFs } from '@/hooks/useGeneratedPDFs';
+import { Button } from '@/components/ui/button';
+import { FileText, Download, Upload, Plus, Calendar, Trash2, TrendingUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useTemplates } from '@/hooks/useTemplates';
-
-// Fix for null use_count
-type _Template = {
-  use_count: number | null;
-  // ... other template properties
-};
+import { useGeneratedPDFs } from '@/hooks/useGeneratedPDFs';
+import { Link } from 'wouter';
+import UploadTemplateDialog from '@/components/UploadTemplateDialog';
 
 const Dashboard = () => {
   const { templates, isLoading: templatesLoading } = useTemplates();
@@ -36,7 +30,7 @@ const Dashboard = () => {
     );
   }
 
-  const totalUsage = templates.reduce((sum, t) => sum + (t.use_count ?? 0), 0);
+  const totalUsage = templates.reduce((sum, t) => sum + t.use_count, 0);
 
   return (
     <DashboardLayout>
@@ -153,7 +147,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {templates.slice(0, 5).map(template => {
+                  {templates.slice(0, 5).map((template) => {
                     // Safely get placeholders count with proper type checking
                     const placeholdersCount = Array.isArray(template.placeholders)
                       ? template.placeholders.length
@@ -229,7 +223,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {generatedPDFs.slice(0, 5).map(pdf => (
+                  {generatedPDFs.slice(0, 5).map((pdf) => (
                     <div
                       key={pdf.id}
                       className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"

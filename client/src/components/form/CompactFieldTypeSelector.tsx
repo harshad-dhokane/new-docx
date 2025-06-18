@@ -1,12 +1,4 @@
-import { format } from 'date-fns';
-import { CalendarIcon, ImageIcon, Type, Hash, AlignLeft, Mail, Phone } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -14,7 +6,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import { CalendarIcon, ImageIcon, Type, Hash, AlignLeft, Mail, Phone } from 'lucide-react';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface CompactFieldTypeSelectorProps {
@@ -40,7 +39,7 @@ const CompactFieldTypeSelector = ({
     .replace(/([A-Z])/g, ' $1')
     .trim()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
   const getFieldTypeIcon = (type: FieldType) => {
@@ -104,7 +103,7 @@ const CompactFieldTypeSelector = ({
         return (
           <Textarea
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={`Enter ${displayName.toLowerCase()}...`}
             className="min-h-[60px] text-sm resize-none"
             rows={2}
@@ -129,7 +128,7 @@ const CompactFieldTypeSelector = ({
               <Calendar
                 mode="single"
                 selected={value ? new Date(value) : undefined}
-                onSelect={date => onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                onSelect={(date) => onChange(date ? format(date, 'yyyy-MM-dd') : '')}
                 initialFocus
               />
             </PopoverContent>
@@ -142,7 +141,7 @@ const CompactFieldTypeSelector = ({
             <Input
               type="email"
               value={value}
-              onChange={e => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               placeholder={`Enter ${displayName.toLowerCase()}...`}
               className="h-8 pl-7 text-xs"
             />
@@ -155,7 +154,7 @@ const CompactFieldTypeSelector = ({
             <Input
               type="tel"
               value={value}
-              onChange={e => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               placeholder="Enter phone..."
               className="h-8 pl-7 text-xs"
             />
@@ -168,7 +167,7 @@ const CompactFieldTypeSelector = ({
             <Input
               type="number"
               value={value}
-              onChange={e => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               placeholder={`Enter ${displayName.toLowerCase()}...`}
               className="h-8 pl-7 text-xs"
             />
@@ -181,7 +180,7 @@ const CompactFieldTypeSelector = ({
             <Input
               type="text"
               value={value}
-              onChange={e => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value)}
               placeholder={`Enter ${displayName.toLowerCase()}...`}
               className="h-8 pl-7 text-xs"
             />
@@ -202,7 +201,7 @@ const CompactFieldTypeSelector = ({
           {getFieldTypeIcon(fieldType)}
           {displayName}
         </Label>
-        <Select value={fieldType} onValueChange={value => setFieldType(value as FieldType)}>
+        <Select value={fieldType} onValueChange={(value) => setFieldType(value as FieldType)}>
           <SelectTrigger className="w-20 h-6 text-xs border">
             <SelectValue />
           </SelectTrigger>

@@ -1,4 +1,6 @@
-import { formatDistanceToNow, startOfWeek, startOfMonth } from 'date-fns';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   FileText,
   Download,
@@ -10,13 +12,10 @@ import {
   Activity as ActivityIcon,
   BarChart3,
 } from 'lucide-react';
-import { useMemo } from 'react';
-
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useActivity } from '@/hooks/useActivity';
 import { useGeneratedPDFs } from '@/hooks/useGeneratedPDFs';
+import { formatDistanceToNow, startOfWeek, startOfMonth } from 'date-fns';
+import { useMemo } from 'react';
 
 const Activity = () => {
   const { activities, isLoading: activitiesLoading } = useActivity();
@@ -28,19 +27,19 @@ const Activity = () => {
     const today = new Date();
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-    const todayActivities = activities.filter(activity => {
+    const todayActivities = activities.filter((activity) => {
       const activityDate = new Date(activity.created_at);
       return activityDate >= todayStart;
     }).length;
 
     const weekStart = startOfWeek(today, { weekStartsOn: 1 });
-    const weekActivities = activities.filter(activity => {
+    const weekActivities = activities.filter((activity) => {
       const activityDate = new Date(activity.created_at);
       return activityDate >= weekStart;
     }).length;
 
     const monthStart = startOfMonth(today);
-    const monthActivities = activities.filter(activity => {
+    const monthActivities = activities.filter((activity) => {
       const activityDate = new Date(activity.created_at);
       return activityDate >= monthStart;
     }).length;
@@ -248,7 +247,7 @@ const Activity = () => {
                   </div>
                 ) : (
                   <div className="space-y-3 sm:space-y-4 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    {activities.slice(0, 20).map(activity => {
+                    {activities.slice(0, 20).map((activity) => {
                       const ActivityIcon = getActivityIcon(activity.action);
                       return (
                         <div

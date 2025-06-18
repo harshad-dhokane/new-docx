@@ -1,8 +1,7 @@
-import { FileText, Upload, Edit, Download, CheckCircle, FileSpreadsheet } from 'lucide-react';
-
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { FileText, Upload, Edit, Download, CheckCircle, FileSpreadsheet } from 'lucide-react';
 
 const UserGuide = () => {
   const steps = [

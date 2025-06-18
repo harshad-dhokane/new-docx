@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,17 +107,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
+  
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
-
+  
   /* Hide scrollbars completely */
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
+  
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -127,7 +128,7 @@
   .hover-scale-102:hover {
     transform: scale(1.02);
   }
-
+  
   .transform-gpu {
     transform: translateZ(0);
   }
@@ -138,27 +139,27 @@
   .page-title {
     @apply text-3xl lg:text-4xl font-bold text-gray-900;
   }
-
+  
   .page-subtitle {
     @apply text-base lg:text-lg text-gray-600;
   }
-
+  
   .section-title {
     @apply text-lg lg:text-xl font-semibold text-gray-900;
   }
-
+  
   .card-title {
     @apply text-base lg:text-lg font-medium text-gray-900;
   }
-
+  
   .card-description {
     @apply text-sm lg:text-base text-gray-600;
   }
-
+  
   .body-text {
     @apply text-sm lg:text-base text-gray-700;
   }
-
+  
   .small-text {
     @apply text-xs lg:text-sm text-gray-500;
   }

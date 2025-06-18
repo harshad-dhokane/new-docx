@@ -98,7 +98,7 @@ export const ActiveSessionsDialog = ({ children }: ActiveSessionsDialogProps) =>
 
   const terminateSession = async (sessionId: string) => {
     try {
-      if (sessionId === sessions.find(s => s.current)?.id) {
+      if (sessionId === sessions.find((s) => s.current)?.id) {
         // Terminating current session - sign out
         await supabase.auth.signOut();
         toast({
@@ -108,7 +108,7 @@ export const ActiveSessionsDialog = ({ children }: ActiveSessionsDialogProps) =>
         setOpen(false);
       } else {
         // Remove session from list (in real implementation, would revoke server-side)
-        setSessions(prev => prev.filter(s => s.id !== sessionId));
+        setSessions((prev) => prev.filter((s) => s.id !== sessionId));
         toast({
           title: 'Session Terminated',
           description: 'The session has been terminated successfully.',
@@ -126,8 +126,8 @@ export const ActiveSessionsDialog = ({ children }: ActiveSessionsDialogProps) =>
 
   const terminateAllOtherSessions = async () => {
     try {
-      const otherSessions = sessions.filter(s => !s.current);
-      setSessions(prev => prev.filter(s => s.current));
+      const otherSessions = sessions.filter((s) => !s.current);
+      setSessions((prev) => prev.filter((s) => s.current));
 
       toast({
         title: 'Sessions Terminated',
@@ -177,7 +177,7 @@ export const ActiveSessionsDialog = ({ children }: ActiveSessionsDialogProps) =>
           ) : (
             <>
               <div className="space-y-3">
-                {sessions.map(session => (
+                {sessions.map((session) => (
                   <div key={session.id} className="border rounded-lg p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -225,7 +225,7 @@ export const ActiveSessionsDialog = ({ children }: ActiveSessionsDialogProps) =>
                 ))}
               </div>
 
-              {sessions.filter(s => !s.current).length > 0 && (
+              {sessions.filter((s) => !s.current).length > 0 && (
                 <div className="pt-4 border-t">
                   <Button
                     variant="outline"

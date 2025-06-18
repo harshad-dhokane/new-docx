@@ -10,7 +10,7 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 async function setupStorage() {
-  console.warn('Setting up storage buckets...');
+  console.log('Setting up storage buckets...');
 
   // All allowed MIME types for docx, xlsx, pdf, images
   const allowedDocTypes = [
@@ -29,7 +29,7 @@ async function setupStorage() {
   if (templatesError && !templatesError.message.includes('already exists')) {
     console.error('Error creating templates bucket:', templatesError.message);
   } else {
-    console.warn('Templates bucket ready');
+    console.log('Templates bucket ready');
   }
 
   // Create generated_pdfs bucket
@@ -41,7 +41,7 @@ async function setupStorage() {
   if (pdfsError && !pdfsError.message.includes('already exists')) {
     console.error('Error creating generated_pdfs bucket:', pdfsError.message);
   } else {
-    console.warn('Generated PDFs bucket ready');
+    console.log('Generated PDFs bucket ready');
   }
 
   // Create profile-images bucket for avatars
@@ -53,7 +53,7 @@ async function setupStorage() {
   if (avatarsError && !avatarsError.message.includes('already exists')) {
     console.error('Error creating profile-images bucket:', avatarsError.message);
   } else {
-    console.warn('Profile-images bucket ready');
+    console.log('Profile-images bucket ready');
 
     // Update bucket public access and CORS settings
     const { error: updateError } = await supabase.storage.updateBucket('profile-images', {
@@ -65,11 +65,11 @@ async function setupStorage() {
     if (updateError) {
       console.error('Error updating profile-images bucket:', updateError.message);
     } else {
-      console.warn('Profile-images bucket updated successfully');
+      console.log('Profile-images bucket updated successfully');
     }
   }
 
-  console.warn('Storage setup completed!');
+  console.log('Storage setup completed!');
 }
 
 setupStorage();

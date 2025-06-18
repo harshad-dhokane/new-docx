@@ -1,22 +1,10 @@
+import express, { type Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
-
-import cors from 'cors';
-import express, { type Request, Response, NextFunction } from 'express';
-
-import { setupProduction } from './production';
 import { registerRoutes } from './routes';
 import { setupVite } from './vite';
-
-interface ApiError extends Error {
-  status?: number;
-  statusCode?: number;
-}
-
-interface JsonResponse {
-  message?: string;
-  [key: string]: unknown;
-}
+import { setupProduction } from './production';
 
 const app = express();
 app.use(express.json());
@@ -56,14 +44,14 @@ app.use(
 
       // Allow all origins in development
       if (process.env.NODE_ENV !== 'production') {
-        console.warn(`[CORS] Development mode - allowing origin: ${origin}`);
+        console.log(`[CORS] Development mode - allowing origin: ${origin}`);
         return callback(null, true);
       }
 
       // More lenient check for Render domains
       if (
         allowedOrigins.includes('*') ||
-        allowedOrigins.some(allowed => {
+        allowedOrigins.some((allowed) => {
           if (allowed.includes('*')) {
             const pattern = new RegExp(allowed.replace('*', '.*'));
             return pattern.test(origin);
@@ -71,7 +59,7 @@ app.use(
           return origin?.includes(allowed);
         })
       ) {
-        console.warn(`[CORS] Allowing origin: ${origin}`);
+        console.log(`[CORS] Allowing origin: ${origin}`);
         return callback(null, true);
       }
 
@@ -82,13 +70,13 @@ app.use(
   })
 );
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: JsonResponse | undefined = undefined;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalJson = res.json.bind(res);
-  res.json = function (body: JsonResponse) {
+  res.json = function (body: any) {
     capturedJsonResponse = body;
     return originalJson(body);
   };
@@ -103,7 +91,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + '…';
       }
-      console.warn(logLine);
+      console.log(logLine);
     }
   });
 
@@ -111,7 +99,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Log 403 errors
-app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err && err.message && err.message.includes('CORS')) {
     console.error(`[403][CORS] ${req.method} ${req.path} :: ${err.message}`);
     return res.status(403).json({ message: 'Forbidden: CORS' });
@@ -122,7 +110,7 @@ app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: ApiError, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || 'Internal Server Error';
     res.status(status).json({ message });
@@ -130,18 +118,22 @@ app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
   });
 
   // Set up production or development environment
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER;
+  // Force production mode on Render or when dist directory exists
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    process.env.RENDER ||
+    fs.existsSync(path.join(process.cwd(), 'dist', 'public'));
 
   if (isProduction) {
-    console.warn('[Server] Running in production mode');
+    console.log('[Server] Running in production mode');
     setupProduction(app);
   } else {
-    console.warn('[Server] Running in development mode');
+    console.log('[Server] Running in development mode');
     await setupVite(app, server);
   }
 
   const port = parseInt(process.env.PORT || '5000', 10);
   server.listen(port, '0.0.0.0', () => {
-    console.warn(`Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
+    console.log(`Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
   });
 })();

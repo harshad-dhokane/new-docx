@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
 import { useAuth } from './useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 export interface GeneratedPDF {
   id: string;
@@ -46,7 +44,7 @@ export function useGeneratedPDFs() {
 
       if (error) throw error;
 
-      return data.map(pdf => ({
+      return data.map((pdf) => ({
         ...pdf,
         template_name: pdf.templates?.name || 'Unknown Template',
       })) as GeneratedPDF[];
@@ -64,7 +62,7 @@ export function useGeneratedPDFs() {
       return;
     }
 
-    const pdf = generatedPDFs.find(p => p.id === pdfId);
+    const pdf = generatedPDFs.find((p) => p.id === pdfId);
     if (!pdf) {
       toast({
         title: 'File Not Found',
@@ -120,7 +118,7 @@ export function useGeneratedPDFs() {
     mutationFn: async (pdfId: string) => {
       if (!user) throw new Error('User not authenticated');
 
-      const pdf = generatedPDFs.find(p => p.id === pdfId);
+      const pdf = generatedPDFs.find((p) => p.id === pdfId);
       if (pdf) {
         // Delete from storage
         await supabase.storage.from('generated_pdfs').remove([pdf.file_path]);

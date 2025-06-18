@@ -1,3 +1,5 @@
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   BarChart3,
   TrendingUp,
@@ -8,7 +10,6 @@ import {
   Calendar,
   Activity,
 } from 'lucide-react';
-import { useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -23,12 +24,10 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useActivity } from '@/hooks/useActivity';
 import { useGeneratedPDFs } from '@/hooks/useGeneratedPDFs';
 import { useTemplates } from '@/hooks/useTemplates';
+import { useActivity } from '@/hooks/useActivity';
+import { useMemo } from 'react';
 
 const Analytics = () => {
   const { generatedPDFs } = useGeneratedPDFs();
@@ -38,7 +37,7 @@ const Analytics = () => {
   const stats = useMemo(() => {
     const totalTemplates = templates.length;
     const totalPDFs = generatedPDFs.length;
-    const _thisMonthPDFs = generatedPDFs.filter(pdf => {
+    const thisMonthPDFs = generatedPDFs.filter((pdf) => {
       const genDate = new Date(pdf.generated_date);
       const thisMonth = new Date();
       return (
@@ -106,12 +105,12 @@ const Analytics = () => {
     const currentYear = new Date().getFullYear();
 
     return months.map((month, index) => {
-      const monthlyPDFs = generatedPDFs.filter(pdf => {
+      const monthlyPDFs = generatedPDFs.filter((pdf) => {
         const genDate = new Date(pdf.generated_date);
         return genDate.getMonth() === index && genDate.getFullYear() === currentYear;
       }).length;
 
-      const monthlyTemplates = templates.filter(template => {
+      const monthlyTemplates = templates.filter((template) => {
         const uploadDate = new Date(template.upload_date);
         return uploadDate.getMonth() === index && uploadDate.getFullYear() === currentYear;
       }).length;
@@ -162,7 +161,7 @@ const Analytics = () => {
       const dayDate = new Date(startOfWeek);
       dayDate.setDate(startOfWeek.getDate() + index);
 
-      const dayActivities = activities.filter(activity => {
+      const dayActivities = activities.filter((activity) => {
         const activityDate = new Date(activity.created_at);
         return activityDate.toDateString() === dayDate.toDateString();
       }).length;

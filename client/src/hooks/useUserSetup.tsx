@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-
-import { supabase } from '@/integrations/supabase/client';
-
 import { useAuth } from './useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from './use-toast';
 
 export const useUserSetup = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     const setupNewUser = async () => {
@@ -33,7 +33,7 @@ export const useUserSetup = () => {
             console.error('Error creating profile:', profileError);
             // Don't show error to user as this might happen on every login attempt
           } else {
-            console.warn('Profile created successfully for user:', user.id);
+            console.log('Profile created successfully for user:', user.id);
           }
         }
 

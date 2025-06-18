@@ -1,11 +1,10 @@
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TemplateHandler } from 'easy-template-x';
-import { Workbook } from 'exceljs';
-
 import { supabase } from '@/integrations/supabase/client';
-
-import { useToast } from './use-toast';
 import { useAuth } from './useAuth';
+import { useToast } from './use-toast';
+import { Workbook } from 'exceljs';
+import { TemplateHandler } from 'easy-template-x';
 
 // Helper function to convert row and column numbers to Excel cell address
 const getCellAddress = (row: number, col: number): string => {
@@ -19,35 +18,35 @@ const getCellAddress = (row: number, col: number): string => {
   return columnName + row;
 };
 
-interface RichTextElement {
-  text?: string | number | boolean;
-}
-
-interface Tag {
-  name: string;
-}
-
 const extractPlaceholders = async (file: File): Promise<string[]> => {
-  console.warn('Starting placeholder extraction...');
   const placeholders = new Set<string>();
+
+  console.log(
+    'Starting placeholder extraction for file:',
+    file.name,
+    'Type:',
+    file.type,
+    'Size:',
+    file.size
+  );
 
   try {
     if (
       file.name.endsWith('.xlsx') ||
       file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     ) {
-      console.warn('Processing Excel file with enhanced extraction...');
+      console.log('Processing Excel file with enhanced extraction...');
 
       try {
         const workbook = new Workbook();
         const arrayBuffer = await file.arrayBuffer();
-        console.warn('ArrayBuffer size:', arrayBuffer.byteLength);
+        console.log('ArrayBuffer size:', arrayBuffer.byteLength);
 
         await workbook.xlsx.load(arrayBuffer);
-        console.warn('Excel workbook loaded successfully');
+        console.log('Excel workbook loaded successfully');
 
         workbook.worksheets.forEach((worksheet, wsIndex) => {
-          console.warn(
+          console.log(
             `Processing worksheet ${wsIndex + 1}:`,
             worksheet.name || `Sheet${wsIndex + 1}`
           );
@@ -77,9 +76,9 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                       cellText = String(cell.value.text);
                     } else if ('richText' in cell.value && Array.isArray(cell.value.richText)) {
                       cellText = cell.value.richText
-                        .map((rt: RichTextElement) => (rt && rt.text ? String(rt.text) : ''))
+                        .map((rt: any) => (rt && rt.text ? String(rt.text) : ''))
                         .join('');
-                    } else if ('result' in cell.value && cell.value.result != null) {
+                    } else if ('result' in cell.value && cell.value.result !== null) {
                       cellText = String(cell.value.result);
                     } else if ('formula' in cell.value && cell.value.formula) {
                       cellText = String(cell.value.formula);
@@ -101,11 +100,11 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                     // Pattern 1: {{placeholder}}
                     const doubleBraceMatches = cellText.match(/\{\{([^}]+)\}\}/g);
                     if (doubleBraceMatches) {
-                      doubleBraceMatches.forEach(match => {
+                      doubleBraceMatches.forEach((match) => {
                         const placeholder = match.replace(/[{}]/g, '').trim();
                         if (placeholder && placeholder.length > 0) {
                           placeholders.add(placeholder);
-                          console.warn(
+                          console.log(
                             `Found Excel placeholder: "${placeholder}" at row ${rowNumber}, col ${colNumber} (${getCellAddress(rowNumber, colNumber)})`
                           );
                         }
@@ -115,7 +114,7 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                     // Pattern 2: {placeholder}
                     const singleBraceMatches = cellText.match(/\{([^{}]+)\}/g);
                     if (singleBraceMatches) {
-                      singleBraceMatches.forEach(match => {
+                      singleBraceMatches.forEach((match) => {
                         const placeholder = match.replace(/[{}]/g, '').trim();
                         // Only add if it doesn't look like a formula or function
                         if (
@@ -125,7 +124,7 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                           !placeholder.includes('(')
                         ) {
                           placeholders.add(placeholder);
-                          console.warn(
+                          console.log(
                             `Found Excel placeholder (single brace): "${placeholder}" at row ${rowNumber}, col ${colNumber} (${getCellAddress(rowNumber, colNumber)})`
                           );
                         }
@@ -135,11 +134,11 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                     // Pattern 3: <<placeholder>>
                     const angleBraceMatches = cellText.match(/<<([^>]+)>>/g);
                     if (angleBraceMatches) {
-                      angleBraceMatches.forEach(match => {
+                      angleBraceMatches.forEach((match) => {
                         const placeholder = match.replace(/[<>]/g, '').trim();
                         if (placeholder && placeholder.length > 0) {
                           placeholders.add(placeholder);
-                          console.warn(
+                          console.log(
                             `Found Excel placeholder (angle brackets): "${placeholder}" at row ${rowNumber}, col ${colNumber} (${getCellAddress(rowNumber, colNumber)})`
                           );
                         }
@@ -149,11 +148,11 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
                     // Pattern 4: $placeholder$ (alternative style)
                     const dollarMatches = cellText.match(/\$([^$]+)\$/g);
                     if (dollarMatches) {
-                      dollarMatches.forEach(match => {
+                      dollarMatches.forEach((match) => {
                         const placeholder = match.replace(/\$/g, '').trim();
                         if (placeholder && placeholder.length > 0 && !placeholder.includes('=')) {
                           placeholders.add(placeholder);
-                          console.warn(
+                          console.log(
                             `Found Excel placeholder (dollar style): "${placeholder}" at row ${rowNumber}, col ${colNumber} (${getCellAddress(rowNumber, colNumber)})`
                           );
                         }
@@ -173,51 +172,51 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
           });
         });
 
-        console.warn(
+        console.log(
           `Excel processing complete. Found ${placeholders.size} unique placeholders:`,
           Array.from(placeholders)
         );
       } catch (excelError) {
-        console.warn('Error processing Excel file:', excelError);
-        console.warn('Continuing with empty placeholders due to Excel processing error');
+        console.error('Error processing Excel file:', excelError);
+        console.log('Continuing with empty placeholders due to Excel processing error');
       }
     } else if (
       file.name.endsWith('.docx') ||
       file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
-      console.warn('Processing Word file using easy-template-x...');
+      console.log('Processing Word file using easy-template-x...');
 
       try {
         const arrayBuffer = await file.arrayBuffer();
-        console.warn('Word file ArrayBuffer size:', arrayBuffer.byteLength);
+        console.log('Word file ArrayBuffer size:', arrayBuffer.byteLength);
 
         // Use easy-template-x to parse tags
         const handler = new TemplateHandler();
         const tags = await handler.parseTags(arrayBuffer);
 
-        console.warn('Tags found by easy-template-x:', tags);
+        console.log('Tags found by easy-template-x:', tags);
 
         // Extract placeholder names from tags
         if (tags && Array.isArray(tags)) {
-          tags.forEach((tag: Tag) => {
+          tags.forEach((tag: any) => {
             if (tag && tag.name && typeof tag.name === 'string') {
               const placeholder = tag.name.trim();
               if (placeholder && placeholder.length > 0) {
                 placeholders.add(placeholder);
-                console.warn(`Found DOCX placeholder: "${placeholder}"`);
+                console.log(`Found DOCX placeholder: "${placeholder}"`);
               }
             }
           });
         }
 
-        console.warn(
+        console.log(
           `DOCX processing complete using easy-template-x. Found ${placeholders.size} unique placeholders.`
         );
       } catch (docxError) {
-        console.warn('Error processing DOCX file with easy-template-x:', docxError);
+        console.error('Error processing DOCX file with easy-template-x:', docxError);
 
         // Fallback to basic text extraction if easy-template-x fails
-        console.warn('Falling back to basic text extraction...');
+        console.log('Falling back to basic text extraction...');
         try {
           const arrayBuffer = await file.arrayBuffer();
           const uint8Array = new Uint8Array(arrayBuffer);
@@ -247,25 +246,25 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
             }
           }
 
-          console.warn('Fallback text extraction complete. Length:', textContent.length);
+          console.log('Fallback text extraction complete. Length:', textContent.length);
 
           // Extract placeholders using regex
           const matches = textContent.match(/\{\{([^}]+)\}\}/g);
           if (matches && matches.length > 0) {
-            matches.forEach(match => {
+            matches.forEach((match) => {
               const placeholder = match.replace(/[{}]/g, '').trim();
               if (placeholder && placeholder.length > 0) {
                 placeholders.add(placeholder);
-                console.warn(`Found Word placeholder (fallback): "${placeholder}"`);
+                console.log(`Found Word placeholder (fallback): "${placeholder}"`);
               }
             });
           }
 
-          console.warn(
+          console.log(
             `Fallback processing complete. Found ${placeholders.size} unique placeholders.`
           );
         } catch (fallbackError) {
-          console.warn('Fallback text extraction also failed:', fallbackError);
+          console.error('Fallback text extraction also failed:', fallbackError);
         }
       }
     } else {
@@ -273,14 +272,14 @@ const extractPlaceholders = async (file: File): Promise<string[]> => {
     }
 
     const result = Array.from(placeholders);
-    console.warn('Final extracted placeholders:', result);
+    console.log('Final extracted placeholders:', result);
     return result;
   } catch (error) {
-    console.warn('Critical error in placeholder extraction:', error);
-    console.warn('Error stack:', (error as Error)?.stack);
+    console.error('Critical error in placeholder extraction:', error);
+    console.error('Error stack:', (error as Error)?.stack);
 
     // Always return empty array instead of throwing to prevent upload failure
-    console.warn('Returning empty placeholders array due to critical error');
+    console.log('Returning empty placeholders array due to critical error');
     return [];
   }
 };
@@ -295,7 +294,7 @@ export const useTemplates = () => {
     queryFn: async () => {
       if (!user) return [];
 
-      console.warn('Fetching templates for user:', user.id);
+      console.log('Fetching templates for user:', user.id);
 
       const { data, error } = await supabase
         .from('templates')
@@ -304,11 +303,11 @@ export const useTemplates = () => {
         .order('upload_date', { ascending: false });
 
       if (error) {
-        console.warn('Error fetching templates:', error);
+        console.error('Error fetching templates:', error);
         throw error;
       }
 
-      console.warn('Fetched templates:', data?.length || 0);
+      console.log('Fetched templates:', data?.length || 0);
       return data || [];
     },
     enabled: !!user,
@@ -317,18 +316,18 @@ export const useTemplates = () => {
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       if (!user) {
-        console.warn('Upload attempted without user authentication');
+        console.error('Upload attempted without user authentication');
         throw new Error('No user logged in');
       }
 
-      console.warn('=== STARTING TEMPLATE UPLOAD ===');
-      console.warn('File details:', {
+      console.log('=== STARTING TEMPLATE UPLOAD ===');
+      console.log('File details:', {
         name: file.name,
         type: file.type,
         size: file.size,
         lastModified: file.lastModified,
       });
-      console.warn('User ID:', user.id);
+      console.log('User ID:', user.id);
 
       // Enhanced file type validation
       const isDocx =
@@ -339,31 +338,31 @@ export const useTemplates = () => {
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
       if (!isDocx && !isXlsx) {
-        console.warn('Invalid file type detected:', file.type, file.name);
+        console.error('Invalid file type detected:', file.type, file.name);
         throw new Error('Invalid file type. Please upload a .docx or .xlsx file.');
       }
 
-      console.warn('File type validation passed:', isDocx ? 'DOCX' : 'XLSX');
+      console.log('File type validation passed:', isDocx ? 'DOCX' : 'XLSX');
 
       // Extract placeholders with comprehensive error handling
       let placeholders: string[] = [];
-      console.warn('Starting placeholder extraction...');
+      console.log('Starting placeholder extraction...');
 
       try {
         placeholders = await extractPlaceholders(file);
-        console.warn('Placeholder extraction completed successfully:', placeholders);
+        console.log('Placeholder extraction completed successfully:', placeholders);
       } catch (extractError) {
-        console.warn('Placeholder extraction failed completely:', extractError);
-        console.warn('Extract error details:', (extractError as Error)?.message);
+        console.error('Placeholder extraction failed completely:', extractError);
+        console.error('Extract error details:', (extractError as Error)?.message);
         // Continue with empty placeholders instead of failing
         placeholders = [];
-        console.warn('Proceeding with empty placeholders due to extraction failure');
+        console.log('Proceeding with empty placeholders due to extraction failure');
       }
 
       // Upload file to Supabase storage
-      console.warn('=== UPLOADING TO STORAGE ===');
+      console.log('=== UPLOADING TO STORAGE ===');
       const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      console.warn('Storage file path:', fileName);
+      console.log('Storage file path:', fileName);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('templates')
@@ -373,18 +372,18 @@ export const useTemplates = () => {
         });
 
       if (uploadError) {
-        console.warn('Storage upload failed:', uploadError);
-        console.warn('Upload error details:', {
+        console.error('Storage upload failed:', uploadError);
+        console.error('Upload error details:', {
           message: uploadError.message,
           name: uploadError.name,
         });
         throw new Error(`File upload failed: ${uploadError.message}`);
       }
 
-      console.warn('File uploaded successfully to storage:', uploadData?.path);
+      console.log('File uploaded successfully to storage:', uploadData?.path);
 
       // Save template metadata to database
-      console.warn('=== SAVING TO DATABASE ===');
+      console.log('=== SAVING TO DATABASE ===');
       const templateData = {
         name: file.name,
         user_id: user.id,
@@ -394,7 +393,7 @@ export const useTemplates = () => {
         use_count: 0,
       };
 
-      console.warn('Template data to insert:', templateData);
+      console.log('Template data to insert:', templateData);
 
       const { data: template, error: insertError } = await supabase
         .from('templates')
@@ -403,8 +402,8 @@ export const useTemplates = () => {
         .single();
 
       if (insertError) {
-        console.warn('Database insert failed:', insertError);
-        console.warn('Insert error details:', {
+        console.error('Database insert failed:', insertError);
+        console.error('Insert error details:', {
           message: insertError.message,
           code: insertError.code,
           details: insertError.details,
@@ -412,33 +411,33 @@ export const useTemplates = () => {
         });
 
         // Clean up uploaded file on database failure
-        console.warn('Cleaning up uploaded file due to database error...');
+        console.log('Cleaning up uploaded file due to database error...');
         try {
           await supabase.storage.from('templates').remove([uploadData.path]);
-          console.warn('File cleanup completed');
+          console.log('File cleanup completed');
         } catch (cleanupError) {
-          console.warn('File cleanup failed:', cleanupError);
+          console.error('File cleanup failed:', cleanupError);
         }
 
         throw new Error(`Database error: ${insertError.message}`);
       }
 
-      console.warn('=== UPLOAD COMPLETED SUCCESSFULLY ===');
-      console.warn('Template saved:', template);
+      console.log('=== UPLOAD COMPLETED SUCCESSFULLY ===');
+      console.log('Template saved:', template);
       return template;
     },
-    onSuccess: template => {
-      console.warn('Upload mutation succeeded:', template.name);
+    onSuccess: (template) => {
+      console.log('Upload mutation succeeded:', template.name);
       queryClient.invalidateQueries({ queryKey: ['templates'] });
       toast({
         title: 'Success',
         description: `Template "${template.name}" uploaded successfully!`,
       });
     },
-    onError: error => {
-      console.warn('Upload mutation failed:', error);
-      console.warn('Error message:', error?.message);
-      console.warn('Error stack:', error?.stack);
+    onError: (error) => {
+      console.error('Upload mutation failed:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
 
       toast({
         title: 'Upload Failed',
@@ -461,7 +460,7 @@ export const useTemplates = () => {
         .single();
 
       if (fetchError) {
-        console.warn('Error fetching template:', fetchError);
+        console.error('Error fetching template:', fetchError);
         throw fetchError;
       }
 
@@ -473,7 +472,7 @@ export const useTemplates = () => {
         .eq('user_id', user.id);
 
       if (deletePdfsError) {
-        console.warn('Error deleting related generated PDFs:', deletePdfsError);
+        console.error('Error deleting related generated PDFs:', deletePdfsError);
         throw new Error(`Failed to delete related PDFs: ${deletePdfsError.message}`);
       }
 
@@ -483,7 +482,7 @@ export const useTemplates = () => {
         .remove([template.file_path]);
 
       if (storageError) {
-        console.warn('Error deleting file from storage:', storageError);
+        console.error('Error deleting file from storage:', storageError);
         // Continue with database deletion even if storage deletion fails
       }
 
@@ -495,7 +494,7 @@ export const useTemplates = () => {
         .eq('user_id', user.id);
 
       if (deleteError) {
-        console.warn('Error deleting template from database:', deleteError);
+        console.error('Error deleting template from database:', deleteError);
         throw deleteError;
       }
 
@@ -508,8 +507,8 @@ export const useTemplates = () => {
         description: 'Template deleted successfully!',
       });
     },
-    onError: error => {
-      console.warn('Delete failed:', error);
+    onError: (error) => {
+      console.error('Delete failed:', error);
       toast({
         title: 'Delete Failed',
         description: error.message || 'Failed to delete template. Please try again.',

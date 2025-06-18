@@ -1,23 +1,20 @@
-import { ArrowLeft, FileText, Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRoute, useLocation } from 'wouter';
-
-import CompactFieldTypeSelector from '@/components/form/CompactFieldTypeSelector';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
+import { ArrowLeft, FileText, Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import CompactFieldTypeSelector from '@/components/form/CompactFieldTypeSelector';
 import { useTemplates } from '@/hooks/useTemplates';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { generateEnhancedPDF } from '@/utils/enhancedPdfGenerator';
-
-type _JsonValue = string | number | boolean | null | _JsonValue[] | { [key: string]: _JsonValue };
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const TemplateGenerator = () => {
-  const [_match, params] = useRoute('/templates/:templateId/generate');
+  const [match, params] = useRoute('/templates/:templateId/generate');
   const [, setLocation] = useLocation();
   const templateId = params?.templateId;
   const { templates } = useTemplates();
@@ -30,7 +27,7 @@ const TemplateGenerator = () => {
   const [generatingFormat, setGeneratingFormat] = useState<'pdf' | 'docx' | 'xlsx' | null>(null);
   const [generationError, setGenerationError] = useState<string | null>(null);
 
-  const template = templates.find(t => t.id === templateId);
+  const template = templates.find((t) => t.id === templateId);
 
   useEffect(() => {
     if (templates.length > 0) {
@@ -40,29 +37,56 @@ const TemplateGenerator = () => {
 
   useEffect(() => {
     if (template) {
+      // Initialize placeholder data - properly handle Json type
       const initialData: Record<string, string> = {};
       const placeholders = Array.isArray(template.placeholders) ? template.placeholders : [];
-      placeholders.forEach(placeholder => {
+      placeholders.forEach((placeholder: any) => {
         if (typeof placeholder === 'string') {
           initialData[placeholder] = '';
         }
       });
       setPlaceholderData(initialData);
+
+      // Set default PDF name
+      setPdfName(
+        `${template.name.replace(/\.[^/.]+$/, '')}_${new Date().toISOString().split('T')[0]}`
+      );
     }
   }, [template]);
 
-  const handleGenerateDocument = async (format: 'pdf' | 'docx' | 'xlsx') => {
-    if (!template || !user?.id || !templateId) return;
-    setGeneratingFormat(format);
+  const handleInputChange = (placeholder: string, value: string) => {
+    setPlaceholderData((prev) => ({
+      ...prev,
+      [placeholder]: value,
+    }));
+    // Clear any previous errors when user starts typing
+    if (generationError) {
+      setGenerationError(null);
+    }
+  };
+
+  const handleGenerateDocument = async (format: 'pdf' | 'docx' | 'xlsx' = 'pdf') => {
+    if (!template || !templateId || !user) return;
+
+    // Clear previous errors and success states for other formats
     setGenerationError(null);
+    setDownloadSuccess({}); // Clear all previous success states
+    setGeneratingFormat(format);
+
+    // Use a default document name if none is provided
+    const documentName =
+      pdfName.trim() ||
+      `${template.name.replace(/\.[^/.]+$/, '')}_${new Date().toISOString().split('T')[0]}`;
+    setPdfName(documentName);
+
+    console.log('Starting document generation...', {
+      templateId,
+      templateName: template.name,
+      format,
+      placeholderData,
+    });
 
     try {
-      console.warn('Starting document generation...', {
-        format,
-        templateId,
-        placeholderCount: Object.keys(placeholderData).length,
-      });
-
       // Convert Json placeholders to string array
       const placeholders = Array.isArray(template.placeholders)
         ? template.placeholders.filter((p): p is string => typeof p === 'string')
@@ -101,18 +125,10 @@ const TemplateGenerator = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setPlaceholderData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  // Check if all required fields are filled
+  // Check if all required fields are filled - properly handle Json type
   const templatePlaceholders = Array.isArray(template?.placeholders) ? template.placeholders : [];
   const hasRequiredData = templatePlaceholders.some(
-    (placeholder): placeholder is string =>
-      typeof placeholder === 'string' && Boolean(placeholderData[placeholder]?.trim())
+    (placeholder: any) => typeof placeholder === 'string' && placeholderData[placeholder]?.trim()
   );
 
   const isGenerating = generatingFormat !== null;
@@ -120,18 +136,28 @@ const TemplateGenerator = () => {
   return (
     <DashboardLayout>
       <div className="container mx-auto p-6 max-w-7xl">
-        <Button variant="ghost" onClick={() => setLocation('/templates')} className="mb-4">
-          <ArrowLeft className="w-4 h-4 mr-2" />
+        <Button variant="ghost" onClick={() => setLocation('/templates')} className="mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Templates
         </Button>
 
         {isLoading ? (
-          <div className="flex items-center justify-center min-h-[200px]">
-            <Loader2 className="w-8 h-8 animate-spin" />
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
-        ) : template ? (
+        ) : !template ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+              <FileText className="h-12 w-12 text-muted-foreground" />
+              <h3 className="text-lg font-semibold">Template Not Found</h3>
+              <p className="text-muted-foreground text-center">
+                The template you're looking for doesn't exist or has been removed.
+              </p>
+              <Button onClick={() => setLocation('/templates')}>View All Templates</Button>
+            </CardContent>
+          </Card>
+        ) : (
           <div className="space-y-6">
-            {/* Document Name and Download Section */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -139,11 +165,11 @@ const TemplateGenerator = () => {
                   Generate Document: {template.name}
                 </CardTitle>
                 <CardDescription>
-                  Enter document name and choose your preferred format
+                  Fill in the required data and generate your customized document
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Document Name Input */}
+                {/* Document Name Section */}
                 <div className="space-y-2">
                   <Label htmlFor="pdfName" className="text-sm font-medium">
                     Document Name
@@ -151,7 +177,7 @@ const TemplateGenerator = () => {
                   <Input
                     id="pdfName"
                     value={pdfName}
-                    onChange={e => setPdfName(e.target.value)}
+                    onChange={(e) => setPdfName(e.target.value)}
                     placeholder="Enter document name"
                     className="h-11"
                   />
@@ -168,6 +194,7 @@ const TemplateGenerator = () => {
                 {/* Download Buttons */}
                 <div className="flex flex-wrap gap-3">
                   {template.name.endsWith('.xlsx') ? (
+                    // Excel template - show both Excel and PDF buttons
                     <>
                       <Button
                         onClick={() => handleGenerateDocument('xlsx')}
@@ -218,6 +245,7 @@ const TemplateGenerator = () => {
                       </Button>
                     </>
                   ) : (
+                    // Word template - show DOCX and PDF buttons
                     <>
                       <Button
                         onClick={() => handleGenerateDocument('docx')}
@@ -279,39 +307,36 @@ const TemplateGenerator = () => {
               </CardContent>
             </Card>
 
-            {/* Form Fields Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Document Fields</CardTitle>
-                <CardDescription>
-                  Fill in the fields below to populate your document ({templatePlaceholders.length}{' '}
-                  fields)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {templatePlaceholders.map(placeholder => {
-                    if (typeof placeholder === 'string') {
-                      return (
-                        <CompactFieldTypeSelector
-                          key={placeholder}
-                          placeholder={placeholder}
-                          value={placeholderData[placeholder] || ''}
-                          onChange={value => handleInputChange(placeholder, value)}
-                        />
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Template Data Form */}
+            {templatePlaceholders.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Template Data</CardTitle>
+                  <CardDescription>
+                    Complete the fields below to populate your document (
+                    {templatePlaceholders.length} fields)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {templatePlaceholders.map((placeholder: any) => {
+                      if (typeof placeholder === 'string') {
+                        return (
+                          <CompactFieldTypeSelector
+                            key={placeholder}
+                            placeholder={placeholder}
+                            value={placeholderData[placeholder] || ''}
+                            onChange={(value) => handleInputChange(placeholder, value)}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        ) : (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Template not found.</AlertDescription>
-          </Alert>
         )}
       </div>
     </DashboardLayout>

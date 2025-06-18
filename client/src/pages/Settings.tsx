@@ -1,28 +1,25 @@
-import { User, Bell, Shield, Download, Trash2, Camera } from 'lucide-react';
-import { useState, useRef } from 'react';
-
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { ActiveSessionsDialog } from '@/components/settings/ActiveSessionsDialog';
-import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
-import { DataExportDialog } from '@/components/settings/DataExportDialog';
-import { DeleteAccountDialog } from '@/components/settings/DeleteAccountDialog';
-import { TwoFactorDialog } from '@/components/settings/TwoFactorDialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfiles } from '@/hooks/useProfiles';
+import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
+import { TwoFactorDialog } from '@/components/settings/TwoFactorDialog';
+import { ActiveSessionsDialog } from '@/components/settings/ActiveSessionsDialog';
+import { DataExportDialog } from '@/components/settings/DataExportDialog';
+import { DeleteAccountDialog } from '@/components/settings/DeleteAccountDialog';
+import { User, Bell, Shield, Download, Trash2, Upload, Camera } from 'lucide-react';
+import { useState, useRef } from 'react';
 
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { profile, updateProfile, uploadAvatar, isUpdating, isUploading } = useProfiles();
-  const { toast } = useToast();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
@@ -45,19 +42,11 @@ const Settings = () => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         // 5MB limit
-        toast({
-          variant: 'destructive',
-          title: 'File too large',
-          description: 'File size must be less than 5MB',
-        });
+        alert('File size must be less than 5MB');
         return;
       }
       if (!file.type.startsWith('image/')) {
-        toast({
-          variant: 'destructive',
-          title: 'Invalid file type',
-          description: 'Please select an image file',
-        });
+        alert('Please select an image file');
         return;
       }
       uploadAvatar(file);
@@ -146,7 +135,7 @@ const Settings = () => {
                 <Input
                   id="name"
                   value={displayName}
-                  onChange={e => setDisplayName(e.target.value)}
+                  onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Enter your name"
                 />
               </div>

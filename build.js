@@ -1,8 +1,8 @@
-const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-console.warn('Building application...');
+console.log('Building application...');
 
 try {
   // Run the build command
@@ -22,9 +22,9 @@ try {
     process.exit(1);
   }
 
-  console.warn('✅ Build completed successfully');
-  console.warn(`📁 Static files in: ${distPath}`);
-  console.warn(`📄 Files created:`, fs.readdirSync(distPath));
+  console.log('✅ Build completed successfully');
+  console.log(`📁 Static files in: ${distPath}`);
+  console.log(`📄 Files created:`, fs.readdirSync(distPath));
 } catch (error) {
   console.error('❌ Build failed:', error.message);
   process.exit(1);

@@ -1,9 +1,8 @@
-import { FileText, Upload, Download, Zap, ArrowRight } from 'lucide-react';
-import { useLocation } from 'wouter';
-
 import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, Upload, Download, Zap, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocation } from 'wouter';
 
 const Index = () => {
   const { user } = useAuth();

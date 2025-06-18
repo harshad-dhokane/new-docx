@@ -1,7 +1,4 @@
-import { Eye, EyeOff, Shield } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Eye, EyeOff, Shield } from 'lucide-react';
 
 interface ChangePasswordDialogProps {
   children: React.ReactNode;
@@ -78,12 +77,11 @@ export const ChangePasswordDialog = ({ children }: ChangePasswordDialogProps) =>
       setNewPassword('');
       setConfirmPassword('');
       setOpen(false);
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Password change error:', error);
       toast({
         title: 'Password Change Failed',
-        description:
-          error instanceof Error ? error.message : 'Failed to change password. Please try again.',
+        description: error.message || 'Failed to change password. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -113,7 +111,7 @@ export const ChangePasswordDialog = ({ children }: ChangePasswordDialogProps) =>
                 id="current-password"
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
-                onChange={e => setCurrentPassword(e.target.value)}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Enter current password"
               />
               <Button
@@ -135,7 +133,7 @@ export const ChangePasswordDialog = ({ children }: ChangePasswordDialogProps) =>
                 id="new-password"
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
               />
               <Button
@@ -158,7 +156,7 @@ export const ChangePasswordDialog = ({ children }: ChangePasswordDialogProps) =>
                 id="confirm-password"
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
               />
               <Button

@@ -1,16 +1,12 @@
 import { useState } from 'react';
-
-import { convertToPdfOnServer, checkServerHealth } from '@/utils/serverPdfGenerator';
-
 import { useToast } from './use-toast';
-
-type PlaceholderData = Record<string, string | boolean | number>;
+import { convertToPdfOnServer, checkServerHealth } from '@/utils/serverPdfGenerator';
 
 export const usePdfGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  const generatePdf = async (file: File, placeholderData: PlaceholderData) => {
+  const generatePdf = async (file: File, placeholderData: Record<string, any>) => {
     setIsGenerating(true);
 
     try {
@@ -20,8 +16,8 @@ export const usePdfGeneration = () => {
         throw new Error('PDF conversion service is not available');
       }
 
-      console.warn('Starting PDF generation for:', file.name);
-      console.warn('Placeholder data:', placeholderData);
+      console.log('Starting PDF generation for:', file.name);
+      console.log('Placeholder data:', placeholderData);
 
       // Convert to PDF using server-side LibreOffice
       const pdfBlob = await convertToPdfOnServer(file);

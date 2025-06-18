@@ -1,7 +1,4 @@
-import { Download, FileText, Database, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,26 +7,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Download, FileText, Database, CheckCircle } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
 interface DataExportDialogProps {
   children: React.ReactNode;
-}
-
-interface ExportData {
-  user_info: {
-    id: string;
-    email: string | null | undefined;
-    created_at: string;
-  };
-  exported_at: string;
-  profile?: Record<string, unknown>;
-  templates: unknown[];
-  generated_pdfs: unknown[];
-  activity_logs: unknown[];
 }
 
 export const DataExportDialog = ({ children }: DataExportDialogProps) => {
@@ -48,16 +34,13 @@ export const DataExportDialog = ({ children }: DataExportDialogProps) => {
     setExportComplete(false);
 
     try {
-      const exportData: ExportData = {
+      const exportData: any = {
         user_info: {
           id: user.id,
           email: user.email,
           created_at: user.created_at,
         },
         exported_at: new Date().toISOString(),
-        templates: [],
-        generated_pdfs: [],
-        activity_logs: [],
       };
 
       // Export profile data
@@ -124,11 +107,11 @@ export const DataExportDialog = ({ children }: DataExportDialogProps) => {
         setExportComplete(false);
         setExportProgress(0);
       }, 2000);
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Export error:', error);
       toast({
         title: 'Export Failed',
-        description: error instanceof Error ? error.message : 'Failed to export your data.',
+        description: error.message || 'Failed to export your data.',
         variant: 'destructive',
       });
     } finally {

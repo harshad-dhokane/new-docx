@@ -1,8 +1,4 @@
-import { Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +7,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Smartphone, Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface TwoFactorDialogProps {
   children: React.ReactNode;
@@ -39,7 +38,7 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
   const checkMfaStatus = async () => {
     try {
       const { data: factors } = await supabase.auth.mfa.listFactors();
-      const totpFactor = factors?.totp?.find(factor => factor.status === 'verified');
+      const totpFactor = factors?.totp?.find((factor) => factor.status === 'verified');
       setMfaEnabled(!!totpFactor);
     } catch (error) {
       console.error('Error checking MFA status:', error);
@@ -59,12 +58,10 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
       setQrCode(data.totp.qr_code);
       setSecret(data.totp.secret);
       setStep('enable');
-    } catch (error: unknown) {
-      console.error('Error enabling 2FA:', error);
+    } catch (error: any) {
       toast({
-        title: '2FA Setup Failed',
-        description:
-          error instanceof Error ? error.message : 'Failed to enable two-factor authentication.',
+        title: 'Setup Failed',
+        description: error.message || 'Failed to set up two-factor authentication.',
         variant: 'destructive',
       });
     } finally {
@@ -104,12 +101,10 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
       setMfaEnabled(true);
       setStep('status');
       setVerificationCode('');
-    } catch (error: unknown) {
-      console.error('Error verifying 2FA:', error);
+    } catch (error: any) {
       toast({
         title: 'Verification Failed',
-        description:
-          error instanceof Error ? error.message : 'Failed to verify two-factor authentication.',
+        description: error.message || 'Invalid verification code. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -121,7 +116,7 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
     setIsLoading(true);
     try {
       const { data: factors } = await supabase.auth.mfa.listFactors();
-      const factor = factors?.totp?.find(f => f.status === 'verified');
+      const factor = factors?.totp?.find((f) => f.status === 'verified');
 
       if (!factor) throw new Error('No active MFA factor found');
 
@@ -138,12 +133,10 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
 
       setMfaEnabled(false);
       setStep('status');
-    } catch (error: unknown) {
-      console.error('Error disabling 2FA:', error);
+    } catch (error: any) {
       toast({
         title: 'Disable Failed',
-        description:
-          error instanceof Error ? error.message : 'Failed to disable two-factor authentication.',
+        description: error.message || 'Failed to disable two-factor authentication.',
         variant: 'destructive',
       });
     } finally {
@@ -224,7 +217,7 @@ export const TwoFactorDialog = ({ children }: TwoFactorDialogProps) => {
               <Input
                 id="verification-code"
                 value={verificationCode}
-                onChange={e => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 className="text-center text-lg tracking-widest"
                 maxLength={6}

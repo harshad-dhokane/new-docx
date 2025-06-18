@@ -1,15 +1,15 @@
-import fs from 'fs';
+import express from 'express';
 import path from 'path';
-
-import express, { Express, Request, Response, NextFunction } from 'express';
+import fs from 'fs';
+import type { Express, Request, Response, NextFunction } from 'express';
 
 export function setupProduction(app: Express) {
   // Use proper path resolution for production
   const projectRoot = path.resolve(process.cwd());
   let staticPath = path.join(projectRoot, 'dist', 'public');
 
-  console.warn(`[Production] Project root: ${projectRoot}`);
-  console.warn(`[Production] Static path: ${staticPath}`);
+  console.log(`[Production] Project root: ${projectRoot}`);
+  console.log(`[Production] Static path: ${staticPath}`);
 
   // Try alternative paths if primary doesn't exist
   if (!fs.existsSync(staticPath)) {
@@ -26,7 +26,7 @@ export function setupProduction(app: Express) {
     for (const altPath of altPaths) {
       if (fs.existsSync(altPath)) {
         const indexExists = fs.existsSync(path.join(altPath, 'index.html'));
-        console.warn(
+        console.log(
           `[Production] Found alternative path: ${altPath} (has index.html: ${indexExists})`
         );
         if (indexExists) {
@@ -38,15 +38,15 @@ export function setupProduction(app: Express) {
 
     if (foundPath) {
       staticPath = foundPath;
-      console.warn(`[Production] Using alternative static path: ${staticPath}`);
+      console.log(`[Production] Using alternative static path: ${staticPath}`);
     } else {
       console.error(`[Production] No valid static directory found`);
       return;
     }
   }
 
-  console.warn(`[Production] Serving static files from: ${staticPath}`);
-  console.warn(`[Production] Contents:`, fs.readdirSync(staticPath));
+  console.log(`[Production] Serving static files from: ${staticPath}`);
+  console.log(`[Production] Contents:`, fs.readdirSync(staticPath));
 
   // CORS middleware for production
   app.use((req: Request, res: Response, next: NextFunction) => {
@@ -66,7 +66,7 @@ export function setupProduction(app: Express) {
 
     const origin = req.headers.origin;
 
-    if (origin && allowedOrigins.some(allowed => origin.includes(allowed))) {
+    if (origin && allowedOrigins.some((allowed) => origin.includes(allowed))) {
       res.setHeader('Access-Control-Allow-Origin', origin);
     }
 

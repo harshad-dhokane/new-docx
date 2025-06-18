@@ -1,4 +1,4 @@
-# Docx Craft
+Docx Craft
 
 A modern full-stack document management and PDF conversion platform, leveraging React, Express, TypeScript, Drizzle ORM, and Supabase for authentication and storage.
 
@@ -6,14 +6,29 @@ A modern full-stack document management and PDF conversion platform, leveraging 
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Architecture](#architecture)
-- [Key Packages & Why They Are Used](#key-packages--why-they-are-used)
-- [Supabase Integration](#supabase-integration)
-- [Setup & Running the Project](#setup--running-the-project)
-- [Scripts](#scripts)
-- [Testing](#testing)
-- [License](#license)
+- [Docx Craft](#docx-craft)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Architecture](#architecture)
+  - [Key Packages \& Why They Are Used](#key-packages--why-they-are-used)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+    - [Shared](#shared)
+    - [Dev \& Tooling](#dev--tooling)
+    - [Docker](#docker)
+  - [Supabase Integration](#supabase-integration)
+  - [Setup \& Running the Project](#setup--running-the-project)
+    - [1. Prerequisites](#1-prerequisites)
+    - [2. Clone the Repository](#2-clone-the-repository)
+    - [3. Install Dependencies](#3-install-dependencies)
+    - [4. Configure Supabase](#4-configure-supabase)
+    - [5. Configure Environment Variables](#5-configure-environment-variables)
+    - [6. Database Migrations](#6-database-migrations)
+    - [7. Start the Development Servers](#7-start-the-development-servers)
+    - [8. Using Docker (Optional)](#8-using-docker-optional)
+  - [Scripts](#scripts)
+  - [Testing](#testing)
+  - [License](#license)
 
 ---
 
@@ -136,7 +151,6 @@ npm install
 Create a `.env` file in the root:
 
 ```
-DATABASE_URL=postgresql://postgres:<your_password>@db.<project_id>.supabase.co:<port>/postgres
 VITE_SUPABASE_URL=https://<your-project>.supabase.co
 VITE_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
@@ -210,4 +224,3 @@ MIT
 **Maintainers:**  
 - [Your Name](mailto:your@email.com)
 
----

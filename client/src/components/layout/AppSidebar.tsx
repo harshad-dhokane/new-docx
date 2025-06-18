@@ -2,6 +2,7 @@ import {
   FileText,
   Home,
   Settings,
+  User,
   LogOut,
   Activity,
   BarChart3,
@@ -9,17 +10,6 @@ import {
   ChevronDown,
   BookOpen,
 } from 'lucide-react';
-import { Link, useLocation } from 'wouter';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Sidebar,
   SidebarContent,
@@ -33,8 +23,18 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfiles } from '@/hooks/useProfiles';
+import { Link, useLocation } from 'wouter';
 
 const navigation = [
   { name: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -69,7 +69,7 @@ export function AppSidebar() {
     const name = profile?.display_name || user?.user_metadata?.name || user?.email || '';
     return name
       .split(' ')
-      .map((n: string) => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -101,7 +101,7 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
-                {navigation.map(item => (
+                {navigation.map((item) => (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton
                       asChild
@@ -131,7 +131,7 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
-                {secondaryNavigation.map(item => (
+                {secondaryNavigation.map((item) => (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton
                       asChild

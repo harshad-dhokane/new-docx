@@ -1,15 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useLocation } from 'wouter';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocation } from 'wouter';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -51,11 +50,10 @@ const LoginForm = () => {
         });
         setLocation('/dashboard');
       }
-    } catch (err) {
+    } catch {
       toast({
         title: 'Login Failed',
-        description:
-          err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive',
       });
     } finally {

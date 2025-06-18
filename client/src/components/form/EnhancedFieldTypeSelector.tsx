@@ -1,12 +1,4 @@
-import { format } from 'date-fns';
-import { CalendarIcon, Type, Hash, AlignLeft } from 'lucide-react';
 import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -14,7 +6,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import { CalendarIcon, ImageIcon, Type, Hash, AlignLeft } from 'lucide-react';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface EnhancedFieldTypeSelectorProps {
@@ -40,7 +39,7 @@ const EnhancedFieldTypeSelector = ({
     .replace(/([A-Z])/g, ' $1')
     .trim()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
   const renderField = () => {
@@ -57,7 +56,7 @@ const EnhancedFieldTypeSelector = ({
               <Input
                 type="file"
                 accept="image/*"
-                onChange={e => {
+                onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
                     const reader = new FileReader();
@@ -79,7 +78,7 @@ const EnhancedFieldTypeSelector = ({
         return (
           <Textarea
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={`Enter ${displayName.toLowerCase()}`}
             className="min-h-[120px] resize-y"
             rows={4}
@@ -104,7 +103,7 @@ const EnhancedFieldTypeSelector = ({
               <Calendar
                 mode="single"
                 selected={value ? new Date(value) : undefined}
-                onSelect={date => onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                onSelect={(date) => onChange(date ? format(date, 'yyyy-MM-dd') : '')}
                 initialFocus
               />
             </PopoverContent>
@@ -115,7 +114,7 @@ const EnhancedFieldTypeSelector = ({
           <Input
             type="email"
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={`Enter ${displayName.toLowerCase()}`}
             className="h-10"
           />
@@ -125,7 +124,7 @@ const EnhancedFieldTypeSelector = ({
           <Input
             type="tel"
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder="Enter phone number"
             className="h-10"
           />
@@ -135,7 +134,7 @@ const EnhancedFieldTypeSelector = ({
           <Input
             type="number"
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={`Enter ${displayName.toLowerCase()}`}
             className="h-10"
           />
@@ -145,7 +144,7 @@ const EnhancedFieldTypeSelector = ({
           <Input
             type="text"
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={`Enter ${displayName.toLowerCase()}`}
             className="h-10"
           />
@@ -157,7 +156,7 @@ const EnhancedFieldTypeSelector = ({
     <div className={cn('space-y-3 p-4 rounded-lg border bg-card', className)}>
       <div className="flex items-center justify-between gap-4">
         <Label className="text-sm font-semibold text-foreground">{displayName}</Label>
-        <Select value={fieldType} onValueChange={value => setFieldType(value as FieldType)}>
+        <Select value={fieldType} onValueChange={(value) => setFieldType(value as FieldType)}>
           <SelectTrigger className="w-[140px] h-8 text-xs">
             <SelectValue placeholder="Field type" />
           </SelectTrigger>

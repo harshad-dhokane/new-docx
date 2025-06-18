@@ -1,30 +1,8 @@
-import { formatDistanceToNow } from 'date-fns';
-import {
-  Download,
-  FileText,
-  Trash2,
-  Calendar,
-  HardDrive,
-  TrendingUp,
-  Search,
-  Grid3X3,
-  List,
-} from 'lucide-react';
-import { useState, useMemo } from 'react';
-
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -32,7 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useGeneratedPDFs, GeneratedPDF } from '@/hooks/useGeneratedPDFs';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Download,
+  FileText,
+  Trash2,
+  Calendar,
+  HardDrive,
+  Activity,
+  TrendingUp,
+  Filter,
+  Search,
+  Grid3X3,
+  List,
+} from 'lucide-react';
+import { useGeneratedPDFs } from '@/hooks/useGeneratedPDFs';
+import { formatDistanceToNow } from 'date-fns';
+import { useState, useMemo } from 'react';
+import { GeneratedPDF } from '@/hooks/useGeneratedPDFs';
 
 // Helper functions
 const formatFileSize = (bytes: number | null) => {
@@ -68,7 +71,7 @@ const CreatedFiles = () => {
   const templates = useMemo(() => {
     const uniqueTemplates = generatedPDFs.reduce(
       (acc, pdf) => {
-        if (!acc.find(t => t.id === pdf.template_id)) {
+        if (!acc.find((t) => t.id === pdf.template_id)) {
           acc.push({
             id: pdf.template_id,
             name: pdf.template_name || 'Unknown Template',
@@ -87,12 +90,12 @@ const CreatedFiles = () => {
 
     // Apply template filter first
     if (templateFilter !== 'all') {
-      filtered = filtered.filter(pdf => pdf.template_id === templateFilter);
+      filtered = filtered.filter((pdf) => pdf.template_id === templateFilter);
     }
 
     // Apply type filter
     if (fileTypeFilter !== 'all') {
-      filtered = filtered.filter(pdf => {
+      filtered = filtered.filter((pdf) => {
         const fileName = pdf.name.toLowerCase();
         const filePath = pdf.file_path.toLowerCase();
         switch (fileTypeFilter) {
@@ -115,7 +118,7 @@ const CreatedFiles = () => {
     // Apply search filter
     if (searchQuery.trim()) {
       filtered = filtered.filter(
-        pdf =>
+        (pdf) =>
           pdf.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           pdf.template_name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -146,14 +149,14 @@ const CreatedFiles = () => {
   };
 
   const totalSize = filteredFiles.reduce((acc, pdf) => acc + (pdf.file_size || 0), 0);
-  const recentFiles = filteredFiles.filter(pdf => {
+  const recentFiles = filteredFiles.filter((pdf) => {
     const genDate = new Date(pdf.generated_date);
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     return genDate > weekAgo;
   }).length;
 
   // Get selected template info for display
-  const selectedTemplate = templates.find(t => t.id === templateFilter);
+  const selectedTemplate = templates.find((t) => t.id === templateFilter);
   const selectedTemplateName = selectedTemplate?.name || 'All Templates';
 
   const stats = [
@@ -234,7 +237,7 @@ const CreatedFiles = () => {
                 <Input
                   placeholder="Search files..."
                   value={searchQuery}
-                  onChange={e => handleSearchChange(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10 w-64"
                 />
               </div>
@@ -247,7 +250,7 @@ const CreatedFiles = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Templates</SelectItem>
-                    {templates.map(template => (
+                    {templates.map((template) => (
                       <SelectItem key={template.id} value={template.id}>
                         {template.name}
                       </SelectItem>
@@ -353,13 +356,13 @@ const CreatedFiles = () => {
         <div className="space-y-6">
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-              {paginatedFiles.map(pdf => (
+              {paginatedFiles.map((pdf) => (
                 <FileCard key={pdf.id} pdf={pdf} downloadPDF={downloadPDF} deletePDF={deletePDF} />
               ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {paginatedFiles.map(pdf => (
+              {paginatedFiles.map((pdf) => (
                 <FileListItem
                   key={pdf.id}
                   pdf={pdf}
@@ -378,19 +381,19 @@ const CreatedFiles = () => {
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage > 1) setCurrentPage(prev => prev - 1);
+                        if (currentPage > 1) setCurrentPage((prev) => prev - 1);
                       }}
                       className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
                     />
                   </PaginationItem>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <PaginationItem key={page}>
                       <PaginationLink
                         href="#"
-                        onClick={e => {
+                        onClick={(e) => {
                           e.preventDefault();
                           setCurrentPage(page);
                         }}
@@ -404,9 +407,9 @@ const CreatedFiles = () => {
                   <PaginationItem>
                     <PaginationNext
                       href="#"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+                        if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
                       }}
                       className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
                     />

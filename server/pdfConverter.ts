@@ -1,8 +1,8 @@
 import { spawn } from 'child_process';
-import { randomUUID } from 'crypto';
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
+import * as os from 'os';
+import { randomUUID } from 'crypto';
 
 export class LibreOfficePDFConverter {
   private tempDir: string;
@@ -84,8 +84,8 @@ export class LibreOfficePDFConverter {
     return 'libreoffice'; // Default command for Unix-like systems
   }
 
-  private runLibreOfficeConversion(inputPath: string, outputDir: string): Promise<void> {
-    return new Promise((resolve, reject) => {
+  private async runLibreOfficeConversion(inputPath: string, outputDir: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
       const args = [
         '--headless',
         '--invisible',
@@ -100,43 +100,44 @@ export class LibreOfficePDFConverter {
         inputPath,
       ];
 
-      this.getLibreOfficeCommand()
-        .then(command => {
-          console.warn('Running LibreOffice conversion:', command, args.join(' '));
+      try {
+        const command = await this.getLibreOfficeCommand();
+        console.log('Running LibreOffice conversion:', command, args.join(' '));
 
-          const process = spawn(command, args, {
-            stdio: ['ignore', 'pipe', 'pipe'],
-            timeout: 30000, // 30 second timeout
-          });
+        const process = spawn(command, args, {
+          stdio: ['ignore', 'pipe', 'pipe'],
+          timeout: 30000, // 30 second timeout
+        });
 
-          let stdout = '';
-          let stderr = '';
+        let stdout = '';
+        let stderr = '';
 
-          process.stdout.on('data', data => {
-            stdout += data.toString();
-          });
+        process.stdout.on('data', (data) => {
+          stdout += data.toString();
+        });
 
-          process.stderr.on('data', data => {
-            stderr += data.toString();
-          });
+        process.stderr.on('data', (data) => {
+          stderr += data.toString();
+        });
 
-          process.on('close', code => {
-            console.warn(`LibreOffice process exited with code ${code}`);
-            if (stderr) console.warn('stderr:', stderr);
-            if (stdout) console.warn('stdout:', stdout);
+        process.on('close', (code) => {
+          console.log(`LibreOffice process exited with code ${code}`);
+          console.log('stdout:', stdout);
+          console.log('stderr:', stderr);
 
-            if (code === 0) {
-              resolve();
-            } else {
-              reject(new Error(`LibreOffice conversion failed with code ${code}`));
-            }
-          });
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(new Error(`LibreOffice conversion failed with code ${code}. stderr: ${stderr}`));
+          }
+        });
 
-          process.on('error', error => {
-            reject(error);
-          });
-        })
-        .catch(reject);
+        process.on('error', (error) => {
+          reject(new Error(`Failed to start LibreOffice: ${error.message}`));
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
@@ -169,12 +170,12 @@ export class LibreOfficePDFConverter {
       }
 
       // On Unix-like systems, try running the command
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const process = spawn('libreoffice', ['--version'], {
           stdio: ['ignore', 'pipe', 'pipe'],
         });
 
-        process.on('close', code => {
+        process.on('close', (code) => {
           resolve(code === 0);
         });
 

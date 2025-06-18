@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { subDays, format } from 'date-fns';
-
 import { supabase } from '@/integrations/supabase/client';
-
 import { useAuth } from './useAuth';
+import { startOfWeek, startOfMonth, subDays, format } from 'date-fns';
 
 export function useAnalytics() {
   const { user } = useAuth();
@@ -52,7 +50,7 @@ export function useAnalytics() {
         const date = subDays(now, i);
         const dateStr = format(date, 'MMM dd');
         const pdfsOnDate = generatedPDFs.filter(
-          pdf => format(new Date(pdf.generated_date), 'MMM dd') === dateStr
+          (pdf) => format(new Date(pdf.generated_date), 'MMM dd') === dateStr
         ).length;
 
         weeklyData.push({
@@ -63,7 +61,7 @@ export function useAnalytics() {
 
       // Monthly template usage - use template name or fallback to ID
       const monthlyUsage = templates
-        .map(template => ({
+        .map((template) => ({
           name: template.name
             ? template.name.length > 20
               ? template.name.substring(0, 20) + '...'
@@ -77,11 +75,11 @@ export function useAnalytics() {
       // Recent activity (last 7 days)
       const sevenDaysAgo = subDays(now, 7);
       const recentPDFs = generatedPDFs.filter(
-        pdf => new Date(pdf.generated_date) > sevenDaysAgo
+        (pdf) => new Date(pdf.generated_date) > sevenDaysAgo
       ).length;
 
       const recentTemplates = templates.filter(
-        template => new Date(template.upload_date) > sevenDaysAgo
+        (template) => new Date(template.upload_date) > sevenDaysAgo
       ).length;
 
       return {

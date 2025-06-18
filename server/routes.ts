@@ -1,8 +1,7 @@
-import { createServer, type Server } from 'http';
-
 import type { Express } from 'express';
+import { createServer, type Server } from 'http';
 import multer from 'multer';
-
+import { storage } from './storage';
 import { pdfConverter } from './pdfConverter';
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -15,7 +14,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'No file provided' });
       }
 
-      console.warn(`Converting file to PDF: ${req.file.originalname}`);
+      console.log(`Converting file to PDF: ${req.file.originalname}`);
 
       // Check if LibreOffice is available
       const isAvailable = await pdfConverter.checkLibreOfficeAvailability();
@@ -26,7 +25,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert to PDF using LibreOffice
       const pdfBuffer = await pdfConverter.convertToPDF(req.file.buffer, req.file.originalname);
 
-      console.warn(`PDF conversion successful, size: ${pdfBuffer.length} bytes`);
+      console.log(`PDF conversion successful, size: ${pdfBuffer.length} bytes`);
 
       // Set appropriate headers
       res.setHeader('Content-Type', 'application/pdf');

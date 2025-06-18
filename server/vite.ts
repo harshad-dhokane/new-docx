@@ -1,10 +1,8 @@
-import fs from 'fs';
-import { type Server } from 'http';
-import path from 'path';
-
 import express, { type Express } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { createServer as createViteServer, createLogger } from 'vite';
-
+import { type Server } from 'http';
 import viteConfig from '../vite.config';
 
 const viteLogger = createLogger();
@@ -17,8 +15,7 @@ export function log(message: string, source = 'express') {
     hour12: true,
   });
 
-  // Development logging can use warn for important server state messages
-  console.warn(`${formattedTime} [${source}] ${message}`);
+  console.log(`${formattedTime} [${source}] ${message}`);
 }
 
 export function serveStatic(app: Express) {
@@ -107,7 +104,7 @@ export async function setupVite(app: Express, server: Server) {
       }
     });
 
-    console.warn('[Vite] Development server setup complete');
+    console.log('[Vite] Development server setup complete');
   } catch (error) {
     console.error('[Vite] Failed to setup development server:', error);
     throw error;
