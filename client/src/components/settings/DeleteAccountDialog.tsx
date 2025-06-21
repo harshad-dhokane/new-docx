@@ -52,9 +52,16 @@ export const DeleteAccountDialog = ({ children }: DeleteAccountDialogProps) => {
       // Delete profile
       await supabase.from('profiles').delete().eq('id', user.id);
 
-      // Note: In a production environment, account deletion would typically
-      // be handled server-side for security reasons. For this demo, we'll
-      // just sign out the user after deleting their data.
+      // Delete user from Supabase Auth via backend
+      const resp = await fetch('/api/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const result = await resp.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to delete user from authentication.');
+      }
 
       toast({
         title: 'Data Deleted',
