@@ -151,6 +151,7 @@ npm install
 Create a `.env` file in the root:
 
 ```
+DATABASE_URL=postgresql://postgres:<password>@db.<your-project>.supabase.co:5432/postgres
 VITE_SUPABASE_URL=https://<your-project>.supabase.co
 VITE_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
@@ -158,6 +159,7 @@ SUPABASE_BUCKET=documents
 PORT=5000
 ```
 
+- The DATABASE_URL can be found in the Connect button under Direct Connection.
 - The `VITE_` prefix is required for Vite to expose env vars to the frontend.
 
 ### 6. Database Migrations
@@ -221,6 +223,6 @@ MIT
 
 ---
 
-**Maintainers:**  
-- [Your Name](mailto:your@email.com)
+**Maintainers:**
 
+- [Your Name](mailto:your@email.com)
