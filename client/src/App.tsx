@@ -16,6 +16,7 @@ import Activity from './pages/Activity';
 import GeneratedPDFs from './pages/GeneratedPDFs';
 import UserGuide from './pages/UserGuide';
 import AuthCallback from './pages/AuthCallback';
+import ResetPassword from './pages/ResetPassword';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,9 @@ const App = () => (
               <ProtectedRoute>
                 <Settings />
               </ProtectedRoute>
+            </Route>
+            <Route path="/auth/reset-password">
+              <ResetPassword />
             </Route>
             <Route>
               <NotFound />

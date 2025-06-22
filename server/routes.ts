@@ -3,6 +3,7 @@ import { createServer, type Server } from 'http';
 import multer from 'multer';
 import { storage } from './storage';
 import { pdfConverter } from './pdfConverter';
+import { deleteUserHandler } from './deleteUser';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -61,6 +62,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // User deletion endpoint
+  app.post('/api/delete-user', deleteUserHandler);
 
   const httpServer = createServer(app);
 
