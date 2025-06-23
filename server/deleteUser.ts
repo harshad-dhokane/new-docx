@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 
 // Use your Supabase service role key (keep this secret!)
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function deleteUserHandler(req: Request, res: Response) {
   const { userId } = req.body;
