@@ -22,3 +22,5 @@ services:
         sync: false
       - key: SUPABASE_ANON_KEY
         sync: false
+      - key: VITE_WS_PORT
+        value: 5000 
