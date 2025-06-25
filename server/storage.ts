@@ -1,36 +1,41 @@
-import { users, type User, type InsertUser } from '../shared/schema';
+import { profiles, type Profile, type InsertProfile } from '../shared/schema';
 
-// modify the interface with any CRUD methods
-// you might need
-
+// Updated interface to work with profiles instead of users
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getProfile(id: string): Promise<Profile | undefined>;
+  getProfileByDisplayName(displayName: string): Promise<Profile | undefined>;
+  createProfile(profile: InsertProfile): Promise<Profile>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  currentId: number;
+  private profiles: Map<string, Profile>;
 
   constructor() {
-    this.users = new Map();
-    this.currentId = 1;
+    this.profiles = new Map();
   }
 
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async getProfile(id: string): Promise<Profile | undefined> {
+    return this.profiles.get(id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find((user) => user.username === username);
+  async getProfileByDisplayName(displayName: string): Promise<Profile | undefined> {
+    return Array.from(this.profiles.values()).find(
+      (profile) => profile.displayName === displayName
+    );
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async createProfile(insertProfile: InsertProfile): Promise<Profile> {
+    const id = crypto.randomUUID();
+    const profile: Profile = {
+      ...insertProfile,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      avatarUrl: insertProfile.avatarUrl === undefined ? null : insertProfile.avatarUrl,
+      displayName: insertProfile.displayName === undefined ? null : insertProfile.displayName,
+    };
+    this.profiles.set(id, profile);
+    return profile;
   }
 }
 

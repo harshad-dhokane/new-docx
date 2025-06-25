@@ -210,3 +210,49 @@ docker run -p 5000:5000 --env-file .env docx-craft
 ## Testing
 
 - **Unit tests:** `npm run test`
+
+## Error Monitoring with Sentry
+
+1. **Get a Sentry DSN:**
+
+   - Sign up at [sentry.io](vscode-file://vscode-app/c:/Users/harsh/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html) and create a project (choose React).
+   - Copy your DSN (Data Source Name).
+
+2. Add DSN to [.env](vscode-file://vscode-app/c:/Users/harsh/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html):
+   `VITE_SENTRY_DSN=your_sentry_dsn_here`
+3. **Sentry is initialized in [main.tsx](vscode-file://vscode-app/c:/Users/harsh/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html):**
+   No further action needed unless you want to change the DSN.
+4. **Test Sentry:**
+
+   - Run the app.
+   - Click the “Break the world” button (if present) to trigger a test error.
+   - Check your Sentry dashboard for the error.
+
+## End-to-End Testing with Playwright
+
+1. **Install dependencies:**
+
+   `npm install`
+
+2. **Run Playwright tests:**
+
+   `npx playwright test`
+
+3. **Run Playwright in headed (UI) mode:**
+
+   `npx playwright test --headed`
+
+4. **Open Playwright Test UI:**
+
+   `npx playwright test --ui`
+
+5. **View HTML test report:**
+
+   After running tests, open the report:
+
+   `npx playwright show-report`
+
+6. **Add new tests:**
+
+   - Place new test files in the [tests](vscode-file://vscode-app/c:/Users/harsh/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html) directory.
+   - See existing tests for examples.

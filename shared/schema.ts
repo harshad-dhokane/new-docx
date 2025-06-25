@@ -1,6 +1,10 @@
 import { pgTable, uuid, text, timestamp, integer, jsonb } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
+// Types for profiles table
+export type Profile = typeof profiles.$inferSelect;
+export type InsertProfile = typeof profiles.$inferInsert;
+
 export const profiles = pgTable('profiles', {
   id: uuid('id').primaryKey().defaultRandom(),
   avatarUrl: text('avatar_url'),
