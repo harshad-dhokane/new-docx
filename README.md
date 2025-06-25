@@ -155,6 +155,9 @@ VITE_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 SUPABASE_BUCKET=documents
 PORT=5000
+NODE_ENV=development
+VITE_SENTRY_DSN=your-sentry-dsn
+
 ```
 
 - The DATABASE_URL can be found in the Connect button under Direct Connection.
