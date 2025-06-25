@@ -5,6 +5,7 @@ import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 
 export default defineConfig(({ command }) => {
   const isDev = command === 'serve';
+  const port = parseInt(process.env.VITE_WS_PORT || '5000', 10);
   return {
     plugins: [react(), runtimeErrorOverlay()],
     resolve: {
@@ -15,6 +16,9 @@ export default defineConfig(({ command }) => {
       },
     },
     root: path.resolve(import.meta.dirname, 'client'),
+    define: {
+      'import.meta.env.VITE_WS_PORT': JSON.stringify(port.toString()),
+    },
     build: {
       outDir: path.resolve(import.meta.dirname, 'dist/public'),
       emptyOutDir: true,
@@ -31,7 +35,7 @@ export default defineConfig(({ command }) => {
     },
     server: {
       // host: 'localhost',
-      port: parseInt(process.env.VITE_WS_PORT || '5000', 10),
+      port: port,
       proxy: {
         '/api': {
           target:
@@ -46,7 +50,7 @@ export default defineConfig(({ command }) => {
     },
     preview: {
       // host: '0.0.0.0',
-      port: parseInt(process.env.VITE_WS_PORT || '5000', 10),
+      port: port,
     },
   };
 });
