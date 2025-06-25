@@ -52,7 +52,6 @@ client/         # React frontend (Vite, TailwindCSS, Supabase client)
 server/         # Express backend (TypeScript, Drizzle ORM, Supabase admin)
 shared/         # Shared types and schema
 drizzle/        # Database migrations
-cypress/        # E2E tests
 ```
 
 - **Frontend**: React (Vite), TypeScript, TailwindCSS, Supabase JS client
@@ -98,7 +97,6 @@ cypress/        # E2E tests
 
 - **eslint** / **prettier**: Linting and formatting.
 - **jest** / **vitest**: Unit testing.
-- **cypress**: End-to-end testing.
 - **ts-node**: Run TypeScript scripts (e.g., migrations).
 - **nodemon**: Hot-reloading for backend dev.
 
@@ -206,23 +204,9 @@ docker run -p 5000:5000 --env-file .env docx-craft
 - `npm start` — Start production server
 - `npm run db:migrate` — Run Drizzle ORM migrations
 - `npm run test` — Run unit tests
-- `npm run test:e2e` — Run Cypress E2E tests
 
 ---
 
 ## Testing
 
 - **Unit tests:** `npm run test`
-- **E2E tests:** `npm run test:e2e` (Cypress)
-
----
-
-## License
-
-MIT
-
----
-
-**Maintainers:**
-
-- [Your Name](mailto:your@email.com)

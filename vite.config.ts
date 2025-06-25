@@ -30,8 +30,8 @@ export default defineConfig(({ command }) => {
       cssMinify: true,
     },
     server: {
-      host: '0.0.0.0',
-      port: parseInt(process.env.PORT || '5000', 10),
+      // host: 'localhost',
+      port: parseInt(process.env.VITE_WS_PORT || '5000', 10),
       proxy: {
         '/api': {
           target:
@@ -42,17 +42,11 @@ export default defineConfig(({ command }) => {
           secure: true,
         },
       },
-      allowedHosts: [
-        'docxcraft.onrender.com',
-        '.onrender.com',
-        'localhost',
-        '127.0.0.1',
-        '.replit.dev',
-      ],
+      allowedHosts: ['docxcraft.onrender.com', '.onrender.com', 'localhost'],
     },
     preview: {
-      host: '0.0.0.0',
-      port: parseInt(process.env.PORT || '5000', 10),
+      // host: '0.0.0.0',
+      port: parseInt(process.env.VITE_WS_PORT || '5000', 10),
     },
   };
 });
